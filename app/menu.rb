@@ -3,8 +3,9 @@ class AppDelegate
     @mainMenu = NSMenu.new
     appName = NSBundle.mainBundle.infoDictionary['CFBundleName']
 
-    @mainMenu.addItemWithTitle("Quit #{appName}", action: 'terminate:', keyEquivalent: 'q')
-    @mainMenu.addItem(NSMenuItem.separatorItem)
+    # @mainMenu.addItem(NSMenuItem.separatorItem)
     @mainMenu.addItemWithTitle("About #{appName}", action: 'orderFrontStandardAboutPanel:', keyEquivalent: '')
+    @mainMenu.addItem(NSMenuItem.separatorItem)
+    @mainMenu.addItemWithTitle("Quit #{appName}", action: 'terminate:', keyEquivalent: 'q')
   end
 end
