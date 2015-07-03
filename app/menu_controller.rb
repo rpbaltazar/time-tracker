@@ -16,11 +16,11 @@ class MenuController
     @appList = []
   end
 
-  def updateMenuContents(newMenu)
+  def updateMenuContents(newMenu, times)
     mainMenu = buildStatusBarMenu
-    newMenu.each do |menuItemContent|
+    newMenu.each_with_index do |menuItemContent, index|
       menuItem = NSMenuItem.new
-      menuItem.title = "#{menuItemContent} - hh:mm"
+      menuItem.title = "#{menuItemContent}: #{times[index]}"
       menuItem.keyEquivalent = ''
       menuItem.action = nil
       mainMenu.insertItem(menuItem, atIndex: 0)

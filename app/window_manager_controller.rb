@@ -60,14 +60,34 @@ class WindowManagerController
   end
 
   def sortAppsByAccumulated
-    invertedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
+    # invertedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
+    invertedApps, times = buildAppNamesAndTimesList
     # TODO:
     # Compute difference between new and old sorted array.
     # If changed, then update the menu
     # puts "sorted Apps: #{@invertedAppList}"
     if invertedApps != @invertedAppList
-      @menuController.updateMenuContents invertedApps
+      @menuController.updateMenuContents invertedApps, times
       @invertedAppList = invertedApps
     end
+  end
+
+  def buildAppNamesAndTimesList
+    inverseSortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }
+    appNames = []
+    accumulatedTimes = []
+    inverseSortedApps.each{|elm|
+      appNames << elm[0]
+      timeHHMM = computeHoursMins elm[1][:accumulated]
+      accumulatedTimes << timeHHMM
+    }
+    return appNames, accumulatedTimes
+  end
+
+  def computeHoursMins totalSeconds
+    hours = (totalSeconds / 3600).floor
+    remainingSeconds = totalSeconds - 3600*hours
+    minutes = (remainingSeconds / 60).floor
+    return "#{hours}:#{minutes}"
   end
 end
