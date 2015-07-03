@@ -1,5 +1,8 @@
 class WindowManagerController
-  def initialize
+
+  def initWithMenuController(menuController)
+    @menuController = menuController
+
     workspace = NSWorkspace.sharedWorkspace
     notificationCenter = workspace.notificationCenter
 
@@ -15,8 +18,6 @@ class WindowManagerController
   def activeAppDidChange(notification)
     newAppName = notification.userInfo['NSWorkspaceApplicationKey'].localizedName
     updateTracker newAppName
-    # puts "----------------------------------------"
-    # puts "#{@trackedTimes}"
   end
 
   private
@@ -25,6 +26,7 @@ class WindowManagerController
     @trackedTimes = {}
     @lastAppName = nil
     @lastAppTime = nil
+    @sortedApps = []
   end
 
   def updateTracker newAppName
@@ -37,6 +39,7 @@ class WindowManagerController
     end
 
     updatePreviousAppAccumulated currentTime
+    sortAppsByAccumulated
 
     @lastAppName = newAppName
     @lastAppTime = currentTime
@@ -54,5 +57,15 @@ class WindowManagerController
       times: [currentTime],
       accumulated: 0
     }
+  end
+
+  def sortAppsByAccumulated
+    # @sortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.reverse!.map{|elm| elm[0]}
+    @sortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
+    # TODO:
+    # Compute difference between new and old sorted array.
+    # If changed, then update the menu
+    # puts "sorted Apps: #{@sortedApps}"
+    @menuController.updateMenuContents @sortedApps
   end
 end
