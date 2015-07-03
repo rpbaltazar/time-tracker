@@ -10,12 +10,21 @@ class MenuController
     @item = statusBar.statusItemWithLength -1
     @item.setImage timeTrackerImage
     @item.setMenu mainMenu
+
+    # TODO: The idea with this is to keep track of the existing rows
+    # and update the text contents instead of redrawing the menu every app update
+    @appList = []
   end
 
   def updateMenuContents(newMenu)
     mainMenu = buildStatusBarMenu
-    newMenu.each do |menuItem|
-      mainMenu.insertItemWithTitle("#{menuItem}", action: nil, keyEquivalent: '', atIndex: 0)
+    newMenu.each do |menuItemContent|
+      menuItem = NSMenuItem.new
+      menuItem.title = "#{menuItemContent} - hh:mm"
+      menuItem.keyEquivalent = ''
+      menuItem.action = nil
+      mainMenu.insertItem(menuItem, atIndex: 0)
+      @appList << menuItem
     end
     @item.setMenu mainMenu
   end

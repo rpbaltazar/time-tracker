@@ -26,7 +26,7 @@ class WindowManagerController
     @trackedTimes = {}
     @lastAppName = nil
     @lastAppTime = nil
-    @sortedApps = []
+    @invertedAppList = []
   end
 
   def updateTracker newAppName
@@ -60,12 +60,14 @@ class WindowManagerController
   end
 
   def sortAppsByAccumulated
-    # @sortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.reverse!.map{|elm| elm[0]}
-    @sortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
+    invertedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
     # TODO:
     # Compute difference between new and old sorted array.
     # If changed, then update the menu
-    # puts "sorted Apps: #{@sortedApps}"
-    @menuController.updateMenuContents @sortedApps
+    # puts "sorted Apps: #{@invertedAppList}"
+    if invertedApps != @invertedAppList
+      @menuController.updateMenuContents invertedApps
+      @invertedAppList = invertedApps
+    end
   end
 end
