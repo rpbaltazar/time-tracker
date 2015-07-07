@@ -1,6 +1,8 @@
 class MenuController
-  def initialize
+
+  def initWithWindowController(windowController)
     mainMenu = buildStatusBarMenu
+
     timeTrackerImage = NSImage.imageNamed 'status_bar_icon'
     timeTrackerImage.setSize(NSMakeSize(16,16))
 
@@ -11,20 +13,21 @@ class MenuController
     @item.setImage timeTrackerImage
     @item.setMenu mainMenu
 
-    # TODO: The idea with this is to keep track of the existing rows
-    # and update the text contents instead of redrawing the menu every app update
-    @appList = []
+    @windowController = windowController
+    self
   end
 
-  def updateMenuContents(newMenu, times)
+  # TODO: update order list or times only
+  # TODO: send current time to get latest app most recent time
+  def menuWillOpen(menu)
     mainMenu = buildStatusBarMenu
-    newMenu.each_with_index do |menuItemContent, index|
+    times = @windowController.getAppTimes
+    @windowController.getAppList.each_with_index do |menuItemContent, index|
       menuItem = NSMenuItem.new
       menuItem.title = "#{menuItemContent}: #{times[index]}"
       menuItem.keyEquivalent = ''
       menuItem.action = nil
       mainMenu.insertItem(menuItem, atIndex: 0)
-      @appList << menuItem
     end
     @item.setMenu mainMenu
   end
@@ -39,6 +42,8 @@ class MenuController
     mainMenu.addItemWithTitle("About #{appName}", action: 'orderFrontStandardAboutPanel:', keyEquivalent: '')
     mainMenu.addItem(NSMenuItem.separatorItem)
     mainMenu.addItemWithTitle("Quit #{appName}", action: 'terminate:', keyEquivalent: 'q')
+
+    mainMenu.setDelegate self
 
     mainMenu
   end

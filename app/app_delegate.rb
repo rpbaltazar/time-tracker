@@ -1,6 +1,6 @@
 class AppDelegate
   def applicationDidFinishLaunching(notification)
-    @menuController = MenuController.new
-    @windowController = WindowManagerController.alloc.initWithMenuController @menuController
+    @windowController = WindowManagerController.new
+    @menuController = MenuController.alloc.initWithWindowController @windowController
   end
 end

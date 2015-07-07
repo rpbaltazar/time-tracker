@@ -1,8 +1,6 @@
 class WindowManagerController
 
-  def initWithMenuController(menuController)
-    @menuController = menuController
-
+  def initialize
     workspace = NSWorkspace.sharedWorkspace
     notificationCenter = workspace.notificationCenter
 
@@ -20,13 +18,23 @@ class WindowManagerController
     updateTracker newAppName
   end
 
+  def getAppList
+    @invertedAppList
+  end
+
+  def getAppTimes
+    @times
+  end
+
   private
 
   def resetCounters
     @trackedTimes = {}
     @lastAppName = nil
     @lastAppTime = nil
+    # TODO: Change these to an hash e.g. sorted apps
     @invertedAppList = []
+    @times = []
   end
 
   def updateTracker newAppName
@@ -60,16 +68,7 @@ class WindowManagerController
   end
 
   def sortAppsByAccumulated
-    # invertedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }.map{|elm| elm[0]}
-    invertedApps, times = buildAppNamesAndTimesList
-    # TODO:
-    # Compute difference between new and old sorted array.
-    # If changed, then update the menu
-    # puts "sorted Apps: #{@invertedAppList}"
-    if invertedApps != @invertedAppList
-      @menuController.updateMenuContents invertedApps, times
-      @invertedAppList = invertedApps
-    end
+    @invertedAppList, @times = buildAppNamesAndTimesList
   end
 
   def buildAppNamesAndTimesList
