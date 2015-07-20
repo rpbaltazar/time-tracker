@@ -21,10 +21,11 @@ class MenuController
   # TODO: send current time to get latest app most recent time
   def menuWillOpen(menu)
     mainMenu = buildStatusBarMenu
-    times = @windowController.getAppTimes
-    @windowController.getAppList.each_with_index do |menuItemContent, index|
+    appListWithTimes = @windowController.getAppTimes
+    appListWithTimes.each do |appData|
+    # @windowController.getAppList.each_with_index do |menuItemContent, index|
       menuItem = NSMenuItem.new
-      menuItem.title = "#{menuItemContent}: #{times[index]}"
+      menuItem.title = "#{appData[0]}: #{computeHoursMins appData[1]}"
       menuItem.keyEquivalent = ''
       menuItem.action = nil
       mainMenu.insertItem(menuItem, atIndex: 0)
@@ -46,6 +47,13 @@ class MenuController
     mainMenu.setDelegate self
 
     mainMenu
+  end
+
+  def computeHoursMins totalSeconds
+    hours = (totalSeconds / 3600).floor
+    remainingSeconds = totalSeconds - 3600*hours
+    minutes = (remainingSeconds / 60).floor
+    return "#{hours}:#{minutes}"
   end
 
 end

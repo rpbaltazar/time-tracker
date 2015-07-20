@@ -18,75 +18,51 @@ class WindowManagerController
     updateTracker newAppName
   end
 
-  def getAppList
-    @invertedAppList
-  end
-
   def getAppTimes
-    @times
+    # TODO: Fix time computing. Accumulated times and temp accum times are growing equally
+    # which breaks the math
+    tempAccumulatedTimes = @accumulatedTimes
+    tempAccumulatedTimes[@lastAppName] += computeTimeDifference @lastTrackedApp
+    inverseSortedApps = tempAccumulatedTimes.sort_by { |k, v| v }
+
+    puts "accumulated   Times= #{@accumulatedTimes}"
+    puts "temporary acc Times= #{tempAccumulatedTimes}"
+    inverseSortedApps
   end
 
   private
 
   def resetCounters
-    @trackedTimes = {}
+    @recordedData = {}
+    # NOTE: Used to keep track/fast access to accumulated times
     @lastAppName = nil
-    @lastAppTime = nil
-    # TODO: Change these to an hash e.g. sorted apps
-    @invertedAppList = []
-    @times = []
+    @accumulatedTimes = {}
+    @lastTrackedApp = nil
   end
 
   def updateTracker newAppName
     currentTime = Time.now
 
-    if @trackedTimes[newAppName].nil?
-      newApp newAppName, currentTime
-    else
-      @trackedTimes[newAppName][:times] << Time.now
+    if @recordedData[newAppName].nil?
+      @recordedData[newAppName] = []
+      @accumulatedTimes[newAppName] = 0
+    end
+    @recordedData[newAppName] << { start_time: currentTime }
+
+    if not @lastTrackedApp.nil?
+      @lastTrackedApp[:end_time] = currentTime
+      @accumulatedTimes[@lastAppName] += computeTimeDifference @lastTrackedApp
     end
 
-    updatePreviousAppAccumulated currentTime
-    sortAppsByAccumulated
-
+    @lastTrackedApp = @recordedData[newAppName].last
     @lastAppName = newAppName
-    @lastAppTime = currentTime
   end
 
-  def updatePreviousAppAccumulated currentTime
-    if !@lastAppTime.nil? && !@lastAppName.nil?
-      timeSpent = currentTime - @lastAppTime
-      @trackedTimes[@lastAppName][:accumulated] += timeSpent
-    end
+  def computeTimeDifference appData
+    startTime = appData[:start_time]
+    endTime = appData[:end_time] || Time.now
+    timeDiff = endTime - startTime
+    return timeDiff
   end
 
-  def newApp appName, currentTime
-    @trackedTimes[appName] = {
-      times: [currentTime],
-      accumulated: 0
-    }
-  end
-
-  def sortAppsByAccumulated
-    @invertedAppList, @times = buildAppNamesAndTimesList
-  end
-
-  def buildAppNamesAndTimesList
-    inverseSortedApps = @trackedTimes.sort_by { |k, v| v[:accumulated] }
-    appNames = []
-    accumulatedTimes = []
-    inverseSortedApps.each{|elm|
-      appNames << elm[0]
-      timeHHMM = computeHoursMins elm[1][:accumulated]
-      accumulatedTimes << timeHHMM
-    }
-    return appNames, accumulatedTimes
-  end
-
-  def computeHoursMins totalSeconds
-    hours = (totalSeconds / 3600).floor
-    remainingSeconds = totalSeconds - 3600*hours
-    minutes = (remainingSeconds / 60).floor
-    return "#{hours}:#{minutes}"
-  end
 end
