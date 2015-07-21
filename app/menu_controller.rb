@@ -17,13 +17,10 @@ class MenuController
     self
   end
 
-  # TODO: update order list or times only
-  # TODO: send current time to get latest app most recent time
   def menuWillOpen(menu)
     mainMenu = buildStatusBarMenu
     appListWithTimes = @windowController.getAppTimes
     appListWithTimes.each do |appData|
-    # @windowController.getAppList.each_with_index do |menuItemContent, index|
       menuItem = NSMenuItem.new
       menuItem.title = "#{appData[0]}: #{computeHoursMins appData[1]}"
       menuItem.keyEquivalent = ''
@@ -53,7 +50,7 @@ class MenuController
     hours = (totalSeconds / 3600).floor
     remainingSeconds = totalSeconds - 3600*hours
     minutes = (remainingSeconds / 60).floor
-    return "#{hours}:#{minutes}"
+    return "#{"%02d" % hours}:#{"%02d" % minutes}"
   end
 
 end

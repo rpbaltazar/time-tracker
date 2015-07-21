@@ -19,13 +19,9 @@ class WindowManagerController
   end
 
   def getAppTimes
-    # TODO: Fix time computing. Accumulated times and temp accum times are growing equally
-    # which breaks the math
-    tempAccumulatedTimes = @accumulatedTimes
+    tempAccumulatedTimes = @accumulatedTimes.clone
     tempAccumulatedTimes[@lastAppName] += computeTimeDifference @lastTrackedApp
     inverseSortedApps = tempAccumulatedTimes.sort_by { |k, v| v }
-
-    puts "accumulated   Times= #{@accumulatedTimes}"
     puts "temporary acc Times= #{tempAccumulatedTimes}"
     inverseSortedApps
   end
