@@ -22,7 +22,6 @@ class WindowManagerController
     tempAccumulatedTimes = @accumulatedTimes.clone
     tempAccumulatedTimes[@lastAppName] += computeTimeDifference @lastTrackedApp
     inverseSortedApps = tempAccumulatedTimes.sort_by { |k, v| v }
-    puts "temporary acc Times= #{tempAccumulatedTimes}"
     inverseSortedApps
   end
 

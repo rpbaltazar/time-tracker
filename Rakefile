@@ -13,4 +13,8 @@ Motion::Project::App.setup do |app|
   app.name = 'TimeTracker'
   app.icon = 'time_tracker.icns'
   app.info_plist['LSUIElement'] = true
+  app.copyright = 'Copyright © 2015 Rui Baltazar'
+  app.identifier = 'net.balazar.TimeTracker'
+  app.version = '0.0.1a'
+  app.codesign_for_release = false
 end
