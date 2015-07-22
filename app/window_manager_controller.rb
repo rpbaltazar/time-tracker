@@ -36,7 +36,7 @@ class WindowManagerController
     @lastTrackedApp = nil
   end
 
-  def updateTracker newAppName
+  def updateTracker(newAppName)
     currentTime = Time.now
 
     if @recordedData[newAppName].nil?
@@ -54,11 +54,10 @@ class WindowManagerController
     @lastAppName = newAppName
   end
 
-  def computeTimeDifference appData
+  def computeTimeDifference(appData)
     startTime = appData[:start_time]
     endTime = appData[:end_time] || Time.now
     timeDiff = endTime - startTime
-    return timeDiff
+    timeDiff.to_i
   end
-
 end
