@@ -17,4 +17,5 @@ Motion::Project::App.setup do |app|
   app.identifier = 'net.balazar.TimeTracker'
   app.version = '0.0.1a'
   app.codesign_for_release = false
+  app.deployment_target = "10.9"
 end
